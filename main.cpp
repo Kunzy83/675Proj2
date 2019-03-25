@@ -19,9 +19,20 @@ int main (int argc, char **argv)
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank); // unique ID for this process; 0<=rank<N where:
 	MPI_Comm_size(MPI_COMM_WORLD, &communicatorSize); // N=communicatorSize (size of "world")
 
-  //create new communicator world for work
-  MPI_Comm* workComm;
-  MPI_Comm_split(MPI_COMM_WORLD, worldGroup);
+  //create new communicator world for work by splitting into two sub Communicators using coloring
+  //Error reporting rank will ignore this communicator as it will create one with only itself in it
+  //Erro reporting rank will be rank 1;
+  int color = 0;
+  if(rank == 1)
+  {
+    color = 1;
+  }
+  MPI_Comm WORK_COMM;
+  MPI_Comm_split(MPI_COMM_WORLD, color, rank, &WORK_COMM);
+  //may use these later
+  int workRank, workCommunicatorSize;
+  MPI_Comm_rank(WORK_COMM, &workRank); // unique ID for this process; 0<=rank<N where:
+	MPI_Comm_size(WORK_COMM, &workCommunicatorSize); // N=communicatorSize (size of "world")
 
   if(rank == 0)
   {
@@ -29,7 +40,7 @@ int main (int argc, char **argv)
 
     //read in data to dataElement array
     std::ifstream inputFile;
-    inputFile.open ("test.txt");
+    inputFile.open (argv[1]);
     if(!inputFile.is_open())
     {
       std::cout<<"File failed to open"<<std::endl;
@@ -67,6 +78,9 @@ int main (int argc, char **argv)
     // {
     //   std::cout<< dataArray[i].modelNum << " "<< dataArray[i].date << " "<< dataArray[i].custType << " "<< dataArray[i].numSales <<std::endl;
     // }
+
+    //figure out if the size if the array can be evenly split among processes in WORKCOMM?
+    
 
     //scatter dataElement array to processes of new communicator world
 
