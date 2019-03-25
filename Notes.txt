@@ -1,0 +1,40 @@
+
+per-model report of sales for: (i) the entire file, (ii) a given year, and (iii) a given customer type
+
+
+Any piece of data may be invalid and will be discarded and reported
+    Specifically, any of the model number, date, customer type, or amount of sale may be invalid.
+
+
+Types if potential sends to give out work assignments...
+    Broadcast
+    Scatter
+
+Ways to aggregate all work together into process 0...
+    Gather
+
+
+
+
+Parts to work on...
+    [In Progress] Create programmer-defined type that corresponds to one record from the file.
+
+    [In Progress] Reading in the file
+        use MPI_File_open to get file handle fh
+        use fh with MPI_File_read to get data from file
+
+    [TODO] Create a new communicator with all rank processes from MPI_COMM_WORLD EXCEPT Error Reporting rank
+
+    [TODO] spreading out work to all the processes (hopefully i log(n) time)
+        Will have to use Scatter somehow
+        DO NOT GIVE Error Reporting rank ANY DATA TO WORK ON
+
+
+    [TODO] aggregating all work
+        Will have to use MPI_Reduce
+
+
+    [TODO] function to give to all processes to keep track of data summations
+
+    [TODO] Error reporting
+        figure out how this rank knows when to quit
